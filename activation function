@@ -1,0 +1,3 @@
+# activation functions consists of sigmoid ,
+
+def sigmoid(x):
