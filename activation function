@@ -1,3 +1,68 @@
-# activation functions consists of sigmoid ,
+import numpy as np 
 
+#sigmoid: suitable for output, but gradient Vanishing， low calculation speed
 def sigmoid(x):
+    return 1/(1+np.exp(-x))
+
+#relu: no Gradient saturation problem, high calculation speed, but invalid for negative input
+def relu(x):
+    return np.max(0,x)
+
+#tanh:Center is the origin, but is not good for weight update because of the smooth output and small gradients
+def tanh(x):
+    return (np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))
+
+#Leaky relu: designed for dead relu, expand the scope of the ReLU function,
+def leaky_relu(x,alpha=0.01):
+    return np.max(x*alpha,x)
+
+#ELU: designed for dead relu，no gradient explosion or vanishing,more accurate,but low calculation speed.
+#It saturates to negative values at smaller inputs, reducing forward propagation variation and information
+def Elu(x)
+    if x<0:
+        return np.exp(x)-1
+    else:
+        return x
+
+#Prelu: no dead relu proble,
+#Compared to ELU, PReLU is a linear operation in the negative range. Even though the slope is very small, it doesn't go to 0
+def P_relu(x,alpha):
+    return np.max(x*alpha,x)
+
+#Softmax:It's not differentiable at zero
+#The gradient of the negative input is zero, which means that for the activation of that region, the weights are not updated during backpropagation, so dead neurons that never activate are produced
+def Softmax(x):
+    return np.exp(x)/np.sum(np.exp(x))
+
+#Swish:prevent the gradient from gradually approaching 0 and causing saturation during slow training
+#solves large negative input problems
+def Swish(x):
+    return x*1/(1+np.exp(-x))
+
+#Maxout: 
+import torch
+import torch.nn as nn
+
+class Maxout(nn.Module):
+    def __init__(self, in_features, out_features, pool_size):
+        super(Maxout, self).__init__()
+        self.pool_size = pool_size
+        self.lin = nn.Linear(in_features * pool_size, out_features)
+
+    def forward(self, x):
+        # Reshape input
+        batch_size, in_features = x.size()
+        x = x.view(batch_size, in_features, self.pool_size)
+        
+        # Max pooling
+        x = x.max(dim=2)[0]
+        
+        # Linear layer
+        x = self.lin(x)
+        return x
+
+#Softplus:The problem that ReLU is not differentiable at zero point is avoided
+#and the nonlinear characteristic of ReLU function is preserved
+def Softplus(x):
+    return np.log(1+np.exp(x))
+    
